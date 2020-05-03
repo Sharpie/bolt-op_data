@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "resolve_reference": {
+      "task": "op_data::get_item"
+    }
+  }
+}

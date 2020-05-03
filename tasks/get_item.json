@@ -1,0 +1,25 @@
+{
+  "description": "Get item data from 1password",
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "input_method": "stdin",
+  "files": ["ruby_task_helper/files/task_helper.rb"],
+  "parameters": {
+    "account": {
+      "type": "String",
+      "description": "The 1password subdomain, e.g. my.1password.com, or account alias to fetch data from"
+    },
+    "id": {
+      "type": "String",
+      "description": "The name or UUID of the item to retrieve data from"
+    },
+    "extract": {
+      "type": "Optional[String]",
+      "description": "A dotted path to a value inside the item to use as the return value"
+    },
+    "vault": {
+      "type": "Optional[String]",
+      "description": "The name of a vault inside the 1password account to fetch data from"
+    }
+  }
+}
