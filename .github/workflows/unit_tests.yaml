@@ -1,0 +1,73 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['*.md']
+  pull_request:
+    type: [opened, reopened, edited]
+    paths-ignore: ['*.md']
+  repository_dispatch:
+    types: [unit_tests]
+
+# TODO: Set up PDK and run `pdk test unit` and `pdk validate`
+#
+# Gem installs are currently faster because they can make use of caching
+# provided by GitHub Actions.
+
+jobs:
+  spec:
+    name: RSpec Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bolt-op_data
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: bolt-op_data
+      - name: Checkout ruby_task_helper
+        uses: actions/checkout@v2
+        with:
+          repository: puppetlabs/puppetlabs-ruby_task_helper
+          path: ruby_task_helper
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.5.x'
+      - name: Install bundler
+        run: |
+          gem install bundler
+          bundle config path .bundle/lib
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
+      - name: Run spec tests
+        run: |
+          bundle exec rake spec
+
+  rubocop:
+    name: RuboCop Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.5.x'
+      - name: Install bundler
+        run: |
+          gem install bundler
+          bundle config path .bundle/lib
+      - name: Cache gems
+        id: cache
+        uses: actions/cache@v1
+        with:
+          path: .bundle/lib
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
+      - name: Install gems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
+      - name: Run RuboCop
+        run: bundle exec rubocop --display-cop-names --display-style-guide --parallel
