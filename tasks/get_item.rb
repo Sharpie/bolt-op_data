@@ -3,10 +3,13 @@
 
 require 'json'
 require 'open3'
+require 'rubygems'
 
 require_relative '../../ruby_task_helper/files/task_helper.rb'
 
 class OpDataGetItem < TaskHelper
+  VERSION = '0.1.0'.freeze
+
   # @return [String] path to the 1password CLI binary.
   # @return [nil] when no 1password CLI is present.
   #
@@ -39,10 +42,17 @@ class OpDataGetItem < TaskHelper
   # @raise [TaskHelper::Error] if the `op` CLI cannot be found or credentials
   #   for the `account` are not set in the environment.
   #
+  # @raise [TaskHelper::Error] when run in a Windows environment.
+  #
   # @return [void]
   def connect_1password(account)
-    # TODO: Fail on Windows. For now.
-    @op_cli, have_op = Open3.capture2('/bin/sh', '-c', 'command -v op')
+    if Gem.win_platform?
+      raise TaskHelper::Error.new('This version of op_data does not support Windows: %{version}' %
+                                    {version: VERSION},
+                                  'op_data/unsupported-platform')
+    else
+      @op_cli, have_op = Open3.capture2('/bin/sh', '-c', 'command -v op')
+    end
 
     if have_op.success?
       @op_cli.chomp!

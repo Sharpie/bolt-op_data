@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'open3'
+require 'rubygems'
 
 require_relative '../../../tasks/get_item'
 
@@ -31,6 +32,13 @@ describe OpDataGetItem do
 
       expect { subject.connect_1password('missing-account.1password.com') }.to \
         raise_error(TaskHelper::Error, /No credentials in environment variable OP_SESSION_missing_account/)
+    end
+
+    it 'raises an error when run on Windows' do
+      allow(Gem).to receive(:win_platform?).and_return(true)
+
+      expect { subject.connect_1password('my.1password.com') }.to \
+        raise_error(TaskHelper::Error, /This version of op_data does not support Windows/)
     end
   end
 
