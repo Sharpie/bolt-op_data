@@ -7,6 +7,15 @@ require 'rubygems'
 
 require_relative '../../ruby_task_helper/files/task_helper.rb'
 
+# Retrieve data from 1password
+#
+# This task wraps `op`, the 1password CLI, to retrieve a single
+# item from a vault in an account. The task expects credentials
+# for the account to be set in the appropriate `OP_SESSION_*`
+# credential.
+#
+# @see https://support.1password.com/command-line-getting-started/
+# @see https://support.1password.com/command-line/#appendix-session-management
 class OpDataGetItem < TaskHelper
   VERSION = '0.1.0'.freeze
 
@@ -16,9 +25,12 @@ class OpDataGetItem < TaskHelper
   # @see #connect_1password
   attr_reader :op_cli
 
-  def task(account:, id:, select: nil, vault: nil, **opts)
-    # Store arguments for use in error messages.
-    @account, @id, @select, @vault = account, id, select, vault
+  def task(account:, id:, select: nil, vault: nil, **_opts)
+    # Store parameters for use in error messages.
+    @account = account
+    @id = id
+    @select = select
+    @vault = vault
 
     connect_1password(account)
 
@@ -28,7 +40,7 @@ class OpDataGetItem < TaskHelper
              select_value(get_item(id, vault), select)
            end
 
-    { value: data }
+    {value: data}
   end
 
   # Find the 1password CLI and check configuration
@@ -105,7 +117,7 @@ class OpDataGetItem < TaskHelper
   # @return [Hash] the result of parsing the JSON representation
   #   of the item.
   def get_item(id, vault = nil)
-    cmdline = [self.op_cli, 'get', 'item', id]
+    cmdline = [op_cli, 'get', 'item', id]
     cmdline.concat(['--vault', vault]) unless vault.nil?
 
     # TODO: `op get item` makes network calls. Should we
@@ -116,7 +128,7 @@ class OpDataGetItem < TaskHelper
       JSON.parse(stdout)
     else
       # The first "[LOG]" line often has details of what went wrong.
-      err_msg = stderr.lines.find {|l| l.start_with?('[LOG]') }
+      err_msg = stderr.lines.find { |l| l.start_with?('[LOG]') }
       err_msg.chomp! unless err_msg.nil?
 
       raise TaskHelper::Error.new('`op get item` exited with error code %{code}: %{msg}' %
@@ -143,7 +155,7 @@ class OpDataGetItem < TaskHelper
     value = data.dig(*path_to_dig(path))
 
     if value.nil?
-      raise KeyError.new('no value found at path')
+      raise KeyError, 'no value found at path'
     else
       value
     end
