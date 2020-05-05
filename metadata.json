@@ -5,6 +5,8 @@
   "summary": "Bolt inventory plugin for getting data from 1password",
   "license": "Apache-2.0",
   "source": "https://github.com/Sharpie/bolt-op_data",
+  "project_page": "https://github.com/Sharpie/bolt-op_data",
+  "issues_url": "https://github.com/Sharpie/bolt-op_data/issues",
   "tags": ["bolt", "inventory", "1password"],
   "dependencies": [
     {"name":"puppetlabs-ruby_task_helper","version_requirement":">= 0.4.0 < 1.0.0"}
