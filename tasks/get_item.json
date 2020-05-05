@@ -15,7 +15,7 @@
     },
     "select": {
       "type": "Optional[String]",
-      "description": "A dotted path to a value inside the item to return"
+      "description": "A JMESPath expression to apply to the data returned"
     },
     "vault": {
       "type": "Optional[String]",

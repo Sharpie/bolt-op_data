@@ -77,31 +77,17 @@ describe OpDataGetItem do
     end
 
     it 'uses dotted paths to pull nested data' do
-      expect(task.select_value(data, 'two.0.name')).to eq('world')
+      expect(task.select_value(data, 'two[0].name')).to eq('world')
     end
 
     it 'raises an exception when nil is returned' do
-      expect { task.select_value(data, 'three.0.foo') }.to \
+      expect { task.select_value(data, 'three[0].foo') }.to \
         raise_error(TaskHelper::Error, /no value found at path/)
     end
 
-    it 'raises an exception if the path includes a non-diggable value' do
-      expect { task.select_value(data, 'one.boom') }.to \
-        raise_error(TaskHelper::Error, /String does not have #dig method/)
-    end
-  end
-
-  describe '#path_to_dig' do
-    it 'splits dotted paths to an array of strings' do
-      input = 'one.two three.four'
-
-      expect(task.path_to_dig(input)).to eq(['one', 'two three', 'four'])
-    end
-
-    it 'converts strings of digits to integers' do
-      input = '0.first.1.second'
-
-      expect(task.path_to_dig(input)).to eq([0, 'first', 1, 'second'])
+    it 'raises an exception if the JMESPath expression is invalid' do
+      expect { task.select_value(data, '.foo') }.to \
+        raise_error(TaskHelper::Error, /unexpected token dot/)
     end
   end
 end

@@ -5,6 +5,8 @@ require 'json'
 require 'open3'
 require 'rubygems'
 
+require 'jmespath'
+
 require_relative '../../ruby_task_helper/files/task_helper.rb'
 
 # Retrieve data from 1password
@@ -12,10 +14,12 @@ require_relative '../../ruby_task_helper/files/task_helper.rb'
 # This task wraps `op`, the 1password CLI, to retrieve a single
 # item from a vault in an account. The task expects credentials
 # for the account to be set in the appropriate `OP_SESSION_*`
-# credential.
+# credential. The ability to use JMESPath expressions to select
+# or re-shape data is also included.
 #
 # @see https://support.1password.com/command-line-getting-started/
 # @see https://support.1password.com/command-line/#appendix-session-management
+# @see https://jmespath.org/tutorial.html
 class OpDataGetItem < TaskHelper
   VERSION = '0.1.0'.freeze
 
@@ -141,18 +145,19 @@ class OpDataGetItem < TaskHelper
 
   # Select a value from a nested data structure
   #
-  # This function takes a data structure and a string containing a dotted path,
-  # such as "details.password", and fetches the value at the path.
+  # This function takes a data structure and a string containing a JMESPath
+  # expression, and fetches the value at the path.
   #
-  # @param data [Hash, Array] A nested structure of Hashes and Arrays.
-  # @param path [String] A dot-delimited path that identifies a value inside
-  #   a nested structure of Hashes and Arrays.
+  # @param data [Hash, Array] a nested structure of Hashes and Arrays.
+  # @param path [String] a JMESPath expression.
   #
   # @raise [TaskHelper::Error] if an error occurs while selecting data.
   #
   # @return [Object] The selected value.
+  #
+  # @see https://jmespath.org/tutorial.html
   def select_value(data, path)
-    value = data.dig(*path_to_dig(path))
+    value = JMESPath.search(path, data)
 
     if value.nil?
       raise KeyError, 'no value found at path'
@@ -174,29 +179,6 @@ class OpDataGetItem < TaskHelper
                                    msg: e.message,
                                    errclass: e.class.name},
                                 'op_data/select-failed')
-  end
-
-  # Convert a dotted path to arguments for dig
-  #
-  # This function takes a string containing a dotted path, such as
-  # "foo.bar" and produces an argument vector for Ruby's `dig` function.
-  #
-  # @param path [String] A dot-delimited path that identifies a value inside
-  #   a nested structure of Hashes and Arrays.
-  #
-  # @return [Array<String, Integer>] An argument list of string indices for
-  #   Hashes and integer indices for Arrays that can be passed to the
-  #   Ruby `dig` function.
-  def path_to_dig(path)
-    path.split('.').map do |e|
-      case e
-      when /\d+/
-        # Strings of integers are interpreted as array indices
-        Integer(e)
-      else
-        e
-      end
-    end
   end
 end
 
