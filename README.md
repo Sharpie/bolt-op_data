@@ -1,87 +1,125 @@
-# op_data
+# Bolt-op_data
 
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
+![Unit Tests](https://github.com/Sharpie/bolt-op_data/workflows/Unit%20Tests/badge.svg?branch=master&event=push)
 
-The README template below provides a starting point with details about what information to include in your README.
+The `op_data` module provides a [Bolt inventory plugin][bolt-plugins] for fetching
+data from 1password vaults. This plugin wraps the [1password CLI tool][op-cli], `op`,
+and is designed to support interactive execution of `bolt` commands from
+an administrator's workstation.
 
-#### Table of Contents
+The `op_data` module currently only supports Linux and macOS.
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with op_data](#setup)
-    * [What op_data affects](#what-op_data-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with op_data](#beginning-with-op_data)
-3. [Usage - Configuration options and additional functionality](#usage)
-4. [Limitations - OS compatibility, etc.](#limitations)
-5. [Development - Guide for contributing to the module](#development)
+  [bolt-plugins]: https://puppet.com/docs/bolt/latest/using_plugins.html
+  [op-cli]: https://support.1password.com/command-line-getting-started/
 
-## Description
-
-Briefly tell users why they might want to use your module. Explain what your module does and what kind of problems users can solve with it.
-
-This should be a fairly short description helps the user decide if your module is what they want.
 
 ## Setup
 
-### What op_data affects **OPTIONAL**
+### Setup Requirements
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
+The `op_data` plugin requires the 1password CLI tool, `op`, to be installed
+and available on the `$PATH`. Mac users can install `op` via the
+[Homebrew package manager][homebrew]:
 
-If there's more that they should know about, though, this is the place to mention:
+```bash
+brew cask install 1password-cli
+```
 
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+  [homebrew]: https://brew.sh
 
-### Setup Requirements **OPTIONAL**
+Installation instructions for other operating systems can be found at:
 
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
+  https://support.1password.com/command-line-getting-started/#set-up-the-command-line-tool
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
+Once the CLI is installed, use the `op signin` command to connect 1password
+accounts. The `my.1password.com` domain is used by personal accounts while
+enterprise accounts typically use a custom domain: `<org-name>.1password.com`.
+The plugin supports using multiple account domains at once. More information
+on connecting accounts to the `op` tool can be found here:
+
+  https://support.1password.com/command-line/#appendix-session-management
+
 
 ### Beginning with op_data
 
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+Once the `op` CLI tool is installed and connected to 1password account(s),
+the `op_data` plugin can be used with a Bolt project by adding an entry
+to the `Puppetfile`:
+
+```ruby
+mod 'sharpie-op_data', '0.1.0'
+```
+
+Next, the `inventory.yaml` file can be configured to retrieve values
+using `_plugin: op_data`. For example, to make passwords or login
+credentials available as variables:
+
+```yaml
+vars:
+  do_token:
+    _plugin: op_data
+    account: my.1password.com
+    vault: 'op_data Test Vault'
+    id: 'DigitalOcean API Token'
+    select: details.password
+
+  vsphere_login:
+    _plugin: op_data
+    account: example-corp.1password.com
+    vault: 'Personal'
+    id: 'vSphere Credential'
+    select: |
+      {user: details.fields[?designation == 'username'].value|[0],
+       pass: details.fields[?designation == 'password'].value|[0]}
+```
+
+The `account` parameter is required and specifies which 1password account
+domain to look data up in. The `id` parameter gives the name or UUID of
+the data item to look up. The `vault` parameter is optional, accepts a
+vault name or UUID, and is used to restrict a lookup to a specific vault
+in a domain.  The `inventory.yaml` file may be configured to look up data from
+multiple account domains.
+
+The `select` parameter can be used to extract or re-shape data using
+JMESPath expressions:
+
+  https://jmespath.org/tutorial.html
+
+The [`jp` CLI tool][jp-cli] is useful for developing `select` expressions that
+work against specific 1password records:
+
+```bash
+eval $(op signin <account>)
+
+op get item '<id>' [--vault <vault>] | jp '<select>'
+```
+
+  [jp-cli]: https://github.com/jmespath/jp
+
 
 ## Usage
 
-Include usage examples for common use cases in the **Usage** section. Show your users how to use your module to solve problems, and be sure to include code examples. Include three to five examples of the most important or common tasks a user can accomplish with your module. Show users how to accomplish more complex tasks that involve different types, classes, and functions working in tandem.
+The `op_data` plugin looks for 1password account credentials set in
+`OP_SESSION_<account>` environment variables and will raise an error
+if credentials are missing. A typical user session is shown below:
 
-## Reference
+```bash
+# Sign into 1password accounts
+eval $(op signin my.1password.com)
+eval $(op signin example-corp.1password.com)
 
-This section is deprecated. Instead, add reference information to your code as Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your module. For details on how to add code comments and generate documentation with Strings, see the Puppet Strings [documentation](https://puppet.com/docs/puppet/latest/puppet_strings.html) and [style guide](https://puppet.com/docs/puppet/latest/puppet_strings_style.html)
+# Run bolt commands that use 1password data via inventory.yaml
+bolt plan run ...
 
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the root of your module directory and list out each of your module's classes, defined types, facts, functions, Puppet tasks, task plans, and resource types and providers, along with the parameters for each.
-
-For each element (class, defined type, function, and so on), list:
-
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
-
-For example:
-
+# Sign out of 1password, or close the terminal session
+op signout my.1password.com
+op signout example-corp.1password.com
 ```
-### `pet::cat`
 
-#### Parameters
-
-##### `meow`
-
-Enables vocalization in your cat. Valid options: 'string'.
-
-Default: 'medium-loud'.
-```
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other warnings.
+  - Windows environments are currently not supported.
 
-## Development
-
-In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
+  - Session credentials generated by `op signin` expire after 30 minutes.
+    Keep this time limit in mind when writing long-running plans.
