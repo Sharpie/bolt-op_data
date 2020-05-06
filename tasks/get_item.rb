@@ -58,14 +58,10 @@ class OpDataGetItem < TaskHelper
   # @raise [TaskHelper::Error] if the `op` CLI cannot be found or credentials
   #   for the `account` are not set in the environment.
   #
-  # @raise [TaskHelper::Error] when run in a Windows environment.
-  #
   # @return [void]
   def connect_1password(account)
     if Gem.win_platform?
-      raise TaskHelper::Error.new('This version of op_data does not support Windows: %{version}' %
-                                    {version: VERSION},
-                                  'op_data/unsupported-platform')
+      @op_cli, have_op = Open3.capture2('where.exe', 'op.exe')
     else
       @op_cli, have_op = Open3.capture2('/bin/sh', '-c', 'command -v op')
     end
