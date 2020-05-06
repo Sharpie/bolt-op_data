@@ -1,0 +1,31 @@
+name: Acceptance Tests
+
+on:
+  repository_dispatch:
+    types: [acceptance_tests]
+
+
+jobs:
+  linux:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Install Bolt
+        run: |
+          curl -O http://apt.puppet.com/puppet-tools-release-bionic.deb
+          dpkg -i puppet-tools-release-bionic.deb
+          apt update
+          apt install -y puppet-bolt
+      - name: Install 1password CLI
+        run: |
+          curl -O https://cache.agilebits.com/dist/1P/op/pkg/v0.10.0/op_linux_amd64_v0.10.0.zip
+          unzip op_linux_amd64_v0.10.0.zip
+          mv op /usr/local/bin/
+      - name: Connect 1password CLI
+        env:
+          OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
+          OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
+          OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+        run: |
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
+
+          op get item 'Test Password' --vault 'op_data test vault' |jq
