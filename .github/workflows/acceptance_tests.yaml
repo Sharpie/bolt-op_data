@@ -47,13 +47,13 @@ jobs:
     steps:
       - name: Install Bolt
         run: |
-          sudo brew cask install pdk puppet-bolt
+          brew cask install pdk puppet-bolt
 
           pdk --version
           bolt --version
       - name: Install 1password CLI
         run: |
-          sudo brew cask install 1password-cli
+          brew cask install 1password-cli
 
           op --version
       - name: Checkout repository
