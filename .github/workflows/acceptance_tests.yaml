@@ -41,3 +41,34 @@ jobs:
 
           bolt plan run op_data_test::test_password
           bolt plan run op_data_test::test_login
+
+  mac:
+    runs-on: macos-10.15
+    steps:
+      - name: Install Bolt
+        run: |
+          sudo brew cask install pdk puppet-bolt
+
+          pdk --version
+          bolt --version
+      - name: Install 1password CLI
+        run: |
+          sudo brew cask install 1password-cli
+
+          op --version
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Provision test fixtures
+        run: |
+          pdk bundle exec rake spec_prep
+      - name: Run acceptance tests
+        env:
+          OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
+          OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
+          OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+        working-directory: spec/fixtures
+        run: |
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
+
+          bolt plan run op_data_test::test_password
+          bolt plan run op_data_test::test_login
