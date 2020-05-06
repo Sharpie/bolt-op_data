@@ -10,6 +10,8 @@ on:
   repository_dispatch:
     types: [acceptance_tests]
 
+env:
+  PDK_FRONTEND: noninteractive
 
 jobs:
   linux:
@@ -91,7 +93,11 @@ jobs:
         run: |
           choco install -y pdk puppet-bolt
 
-          Write-Host 'done!'
+          Get-ChildItem -Path Env:
+
+          bolt --version
+          pdk --version
+
       - name: Install 1password CLI
         run: |
           choco install -y 1password-cli
