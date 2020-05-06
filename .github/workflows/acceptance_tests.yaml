@@ -28,4 +28,4 @@ jobs:
         run: |
           eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
 
-          op get item 'Test Password' --vault 'op_data test vault' |jq
+          op get item 'Test Password' --vault 'op_data test vault'
