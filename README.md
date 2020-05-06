@@ -1,6 +1,7 @@
 # Bolt-op_data
 
 ![Unit Tests](https://github.com/Sharpie/bolt-op_data/workflows/Unit%20Tests/badge.svg?branch=master&event=push)
+![Acceptance Tests](https://github.com/Sharpie/bolt-op_data/workflows/Acceptance%20Tests/badge.svg?branch=master)
 
 The `op_data` module provides a [Bolt inventory plugin][bolt-plugins] for fetching
 data from 1password vaults. This plugin wraps the [1password CLI tool][op-cli], `op`,

@@ -1,6 +1,12 @@
 name: Acceptance Tests
 
 on:
+  push:
+    branches: [master]
+    paths-ignore: ['*.md']
+  pull_request:
+    type: [opened, reopened, edited]
+    paths-ignore: ['*.md']
   repository_dispatch:
     types: [acceptance_tests]
 
@@ -48,7 +54,7 @@ jobs:
       - name: Install Bolt
         run: |
           brew tap puppetlabs/puppet
-          brew update
+          brew update > /dev/null
           brew cask install pdk puppet-bolt
 
           export PATH="/opt/puppetlabs/pdk/bin:/opt/puppetlabs/bin:${PATH}"
