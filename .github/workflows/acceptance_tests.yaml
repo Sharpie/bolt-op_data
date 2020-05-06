@@ -96,8 +96,6 @@ jobs:
           Get-ChildItem -Path Env:
 
           bolt --version
-          pdk --version
-
       - name: Install 1password CLI
         run: |
           choco install -y 1password-cli
