@@ -1,0 +1,20 @@
+---
+version: 2
+
+vars:
+  test_password:
+    _plugin: op_data
+    account: my.1password.com
+    vault: 'op_data test vault'
+    id: 'Test Password'
+    select: |
+      details.password
+
+  test_login:
+    _plugin: op_data
+    account: my.1password.com
+    vault: 'op_data test vault'
+    id: 'Test Login'
+    select: |
+      {user: details.fields[?designation == 'username'].value|[0],
+       pass: details.fields[?designation == 'password'].value|[0]}
