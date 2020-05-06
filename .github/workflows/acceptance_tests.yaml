@@ -51,6 +51,9 @@ jobs:
           brew update
           brew cask install pdk puppet-bolt
 
+          export PATH="/opt/puppetlabs/pdk/bin:/opt/puppetlabs/bin:${PATH}"
+          printf "::set-env name=PATH::${PATH}\n"
+
           pdk --version
           bolt --version
       - name: Install 1password CLI
