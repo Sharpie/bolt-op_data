@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Install Bolt
         run: |
+          brew tap puppetlabs/puppet
+          brew update
           brew cask install pdk puppet-bolt
 
           pdk --version
