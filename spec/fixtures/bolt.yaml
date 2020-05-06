@@ -1,2 +1,2 @@
 ---
-modulepath: 'modules:site'
+modulepath: ['modules', 'site']
