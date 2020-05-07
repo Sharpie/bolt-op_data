@@ -26,15 +26,23 @@ brew cask install 1password-cli
 
   [homebrew]: https://brew.sh
 
-Installation instructions for other operating systems can be found at:
+Windows users can install `op` via the [Chocolately package manager][chocolatey]:
+
+```ps1
+choco install 1password-cli
+```
+
+  [chocolatey]: https://chocolatey.org/
+
+Direct downloads and instructions for other operating systems can be found at:
 
   https://support.1password.com/command-line-getting-started/#set-up-the-command-line-tool
 
 Once the CLI is installed, use the `op signin` command to connect 1password
 accounts. The `my.1password.com` domain is used by personal accounts while
 enterprise accounts typically use a custom domain: `<org-name>.1password.com`.
-The plugin supports using multiple account domains at once. More information
-on connecting accounts to the `op` tool can be found here:
+The `op_data` plugin supports using data from multiple account domains at once.
+More information on connecting accounts to the `op` tool can be found here:
 
   https://support.1password.com/command-line/#appendix-session-management
 
@@ -46,7 +54,7 @@ the `op_data` plugin can be used with a Bolt project by adding an entry
 to the `Puppetfile`:
 
 ```ruby
-mod 'sharpie-op_data', '0.1.0'
+mod 'sharpie-op_data', '0.2.0'
 ```
 
 Next, the `inventory.yaml` file can be configured to retrieve values
@@ -73,11 +81,11 @@ vars:
 ```
 
 The `account` parameter is required and specifies which 1password account
-domain to look data up in. The `id` parameter gives the name or UUID of
-the data item to look up. The `vault` parameter is optional, accepts a
-vault name or UUID, and is used to restrict a lookup to a specific vault
-in a domain.  The `inventory.yaml` file may be configured to look up data from
-multiple account domains.
+domain to look data up in. The `id` parameter is also required and gives
+the name or UUID of the data item to look up. The `vault` parameter is
+optional, accepts a vault name or UUID, and is used to restrict a lookup to a
+specific vault in a domain. The `inventory.yaml` file may be configured to
+look up data from multiple account domains.
 
 The `select` parameter can be used to extract or re-shape data using
 JMESPath expressions:
@@ -88,9 +96,9 @@ The [`jp` CLI tool][jp-cli] is useful for developing `select` expressions that
 work against specific 1password records:
 
 ```bash
-eval $(op signin <account>)
+eval $(op signin '<account>')
 
-op get item '<id>' [--vault <vault>] | jp '<select>'
+op get item '<id>' [--vault '<vault>'] | jp '<select>'
 ```
 
   [jp-cli]: https://github.com/jmespath/jp
