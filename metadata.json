@@ -7,9 +7,11 @@
   "source": "https://github.com/Sharpie/bolt-op_data",
   "project_page": "https://github.com/Sharpie/bolt-op_data",
   "issues_url": "https://github.com/Sharpie/bolt-op_data/issues",
-  "tags": ["bolt", "inventory", "1password"],
   "dependencies": [
-    {"name":"puppetlabs-ruby_task_helper","version_requirement":">= 0.4.0 < 1.0.0"}
+    {
+      "name": "puppetlabs-ruby_task_helper",
+      "version_requirement": ">= 0.4.0 < 1.0.0"
+    }
   ],
   "operatingsystem_support": [
     {
@@ -74,7 +76,12 @@
       "version_requirement": ">= 2.0.0 < 3.0.0"
     }
   ],
-  "pdk-version": "1.17.0",
-  "template-url": "pdk-default#1.17.0",
-  "template-ref": "tags/1.17.0-0-gd3a4319"
+  "tags": [
+    "bolt",
+    "inventory",
+    "1password"
+  ],
+  "pdk-version": "1.18.0",
+  "template-url": "pdk-default#1.18.0",
+  "template-ref": "tags/1.18.0-0-g095317c"
 }
