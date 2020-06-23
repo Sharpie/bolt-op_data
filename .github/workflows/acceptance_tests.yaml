@@ -41,6 +41,7 @@ jobs:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
           OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
           eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
@@ -77,6 +78,7 @@ jobs:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
           OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
           eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
@@ -124,6 +126,7 @@ jobs:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
           OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
           Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin my.1password.com $Env:OP_TEST_ACCOUNT $Env:OP_TEST_SECRET)
