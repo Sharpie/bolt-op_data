@@ -26,8 +26,8 @@ jobs:
           bolt --version
       - name: Install 1password CLI
         run: |
-          curl -O https://cache.agilebits.com/dist/1P/op/pkg/v1.6.0/op_linux_amd64_v1.6.0.zip
-          unzip op_linux_amd64_v1.6.0.zip
+          curl -O https://cache.agilebits.com/dist/1P/op/pkg/v1.10.2/op_linux_amd64_v1.10.2.zip
+          unzip op_linux_amd64_v1.10.2.zip
           sudo mv op /usr/local/bin/
 
           op --version
