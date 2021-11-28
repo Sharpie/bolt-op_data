@@ -13,12 +13,12 @@ on:
 
 jobs:
   linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
-      - name: Install Bolt
+      - name: Install PDK and Bolt
         run: |
-          curl -O http://apt.puppet.com/puppet-tools-release-bionic.deb
-          sudo dpkg -i puppet-tools-release-bionic.deb
+          curl -O http://apt.puppet.com/puppet-tools-release-focal.deb
+          sudo dpkg -i puppet-tools-release-focal.deb
           sudo apt update
           sudo apt install -y pdk puppet-bolt
 
@@ -26,9 +26,9 @@ jobs:
           bolt --version
       - name: Install 1password CLI
         run: |
-          curl -O https://cache.agilebits.com/dist/1P/op/pkg/v1.12.3/op_linux_amd64_v1.12.3.zip
+          curl -LO https://cache.agilebits.com/dist/1P/op/pkg/v1.12.3/op_linux_amd64_v1.12.3.zip
           unzip op_linux_amd64_v1.12.3.zip
-          sudo mv op /usr/local/bin/
+          sudo install -m 0755 op /usr/local/bin
 
           op --version
       - name: Checkout repository
