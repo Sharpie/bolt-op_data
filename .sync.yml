@@ -6,6 +6,10 @@ appveyor.yml:
 .gitlab-ci.yml:
   delete: true
 
+.gitignore:
+  paths:
+    - spec/fixtures/bolt-debug.log
+
 .rubocop.yml:
   default_configs:
     Layout/SpaceInsideHashLiteralBraces:
