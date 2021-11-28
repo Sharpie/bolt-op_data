@@ -90,38 +90,25 @@ jobs:
   windows:
     runs-on: windows-2019
     steps:
-      - name: Install Bolt
+      - name: Install PDK
         run: |
-          choco install -y puppet-bolt
+          choco install -y pdk
 
-          bolt --version
+          refreshenv
+
+          pdk --version
       - name: Install 1password CLI
         run: |
           choco install -y 1password-cli
 
+          refreshenv
+
           op --version
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.5.x'
-      - name: Install bundler
-        run: |
-          gem install bundler
-          bundle config path .bundle/lib
-      - name: Cache gems
-        id: cache
-        uses: actions/cache@v1
-        with:
-          path: .bundle/lib
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
-      - name: Install gems
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
       - name: Provision test fixtures
         run: |
-          bundle exec rake spec_prep
+          pdk bundle exec rake spec_prep
       - name: Run acceptance tests
         env:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
@@ -132,5 +119,5 @@ jobs:
         run: |
           Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin my.1password.com $Env:OP_TEST_ACCOUNT $Env:OP_TEST_SECRET)
 
-          bolt plan run op_data_test::test_password
-          bolt plan run op_data_test::test_login
+          pdk bundle exec bolt plan run op_data_test::test_password
+          pdk bundle exec bolt plan run op_data_test::test_login
