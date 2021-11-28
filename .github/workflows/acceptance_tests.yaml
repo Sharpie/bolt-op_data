@@ -50,22 +50,23 @@ jobs:
           bolt plan run op_data_test::test_login
 
   mac:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
-      - name: Install Bolt
+      - name: Install PDK and Bolt
         run: |
           brew tap puppetlabs/puppet
           brew update > /dev/null
-          brew cask install pdk puppet-bolt
+          brew install pdk puppet-bolt
 
           export PATH="/opt/puppetlabs/pdk/bin:/opt/puppetlabs/bin:${PATH}"
-          printf "::set-env name=PATH::${PATH}\n"
+          printf '%s\n' '/opt/puppetlabs/bin' >> $GITHUB_PATH
+          printf '%s\n' '/opt/puppetlabs/pdk/bin' >> $GITHUB_PATH
 
           pdk --version
           bolt --version
       - name: Install 1password CLI
         run: |
-          brew cask install 1password-cli
+          brew install 1password-cli
 
           op --version
       - name: Checkout repository
