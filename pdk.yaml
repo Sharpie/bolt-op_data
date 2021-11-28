@@ -1,0 +1,4 @@
+---
+ignore:
+- spec/fixtures/site/op_data_test/
+- spec/spec_helper.rb

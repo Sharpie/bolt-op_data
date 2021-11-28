@@ -11,11 +11,6 @@ appveyor.yml:
     Layout/SpaceInsideHashLiteralBraces:
       Description: Omit space inside hash literals to distinguish them from blocks.
       EnforcedStyle: no_space
-    Style/BracesAroundHashParameters:
-      Description: |
-        Braces are actually required by Ruby 2.7 in order to disambiguate between
-        keword arguments and actual hash parameters. Removed in RuboCop v0.80.0.
-      Enabled: false
     Style/GuardClause:
       Description: |
         TaskHelper::Error exceptions require multiple lines to construct in order
@@ -28,6 +23,8 @@ appveyor.yml:
         useful when it avoids escaping slashes.
       EnforcedStyle: slashes
       AllowInnerSlashes: false
+      Exclude:
+        - spec/spec_helper.rb
     RSpec/SubjectStub:
       Description: Needed to stub the location of the `op` CLI tool.
       Enabled: false

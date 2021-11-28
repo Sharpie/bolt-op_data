@@ -21,7 +21,7 @@ require_relative '../../ruby_task_helper/files/task_helper.rb'
 # @see https://support.1password.com/command-line/#appendix-session-management
 # @see https://jmespath.org/tutorial.html
 class OpDataGetItem < TaskHelper
-  VERSION = '0.2.0'.freeze
+  VERSION = '0.2.0'
 
   # @return [String] path to the 1password CLI binary.
   # @return [nil] when no 1password CLI is present.
@@ -129,7 +129,7 @@ class OpDataGetItem < TaskHelper
     else
       # The first "[LOG]" line often has details of what went wrong.
       err_msg = stderr.lines.find { |l| l.start_with?('[LOG]') }
-      err_msg.chomp! unless err_msg.nil?
+      err_msg&.chomp!
 
       raise TaskHelper::Error.new('`op get item` exited with error code %{code}: %{msg}' %
                                     {code: status.exitstatus,

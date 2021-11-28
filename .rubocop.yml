@@ -58,6 +58,8 @@ Style/RegexpLiteral:
     useful when it avoids escaping slashes.
   EnforcedStyle: slashes
   AllowInnerSlashes: false
+  Exclude:
+  - spec/spec_helper.rb
 Style/TernaryParentheses:
   Description: Checks for use of parentheses around ternary conditions. Enforce parentheses
     on complex expressions for better readability, but seriously consider breaking
@@ -77,11 +79,6 @@ Style/SymbolArray:
 Layout/SpaceInsideHashLiteralBraces:
   Description: Omit space inside hash literals to distinguish them from blocks.
   EnforcedStyle: no_space
-Style/BracesAroundHashParameters:
-  Description: |
-    Braces are actually required by Ruby 2.7 in order to disambiguate between
-    keword arguments and actual hash parameters. Removed in RuboCop v0.80.0.
-  Enabled: false
 Style/GuardClause:
   Description: |
     TaskHelper::Error exceptions require multiple lines to construct in order
