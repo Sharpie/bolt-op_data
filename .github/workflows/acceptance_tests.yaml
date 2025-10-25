@@ -31,7 +31,7 @@ jobs:
 
           op --version
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep
@@ -67,7 +67,7 @@ jobs:
 
           op --version
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep
@@ -102,7 +102,7 @@ jobs:
 
           op --version
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep

@@ -24,11 +24,11 @@ jobs:
         working-directory: bolt-op_data
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         with:
           path: bolt-op_data
       - name: Checkout ruby_task_helper
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         with:
           repository: puppetlabs/puppetlabs-ruby_task_helper
           path: ruby_task_helper
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
