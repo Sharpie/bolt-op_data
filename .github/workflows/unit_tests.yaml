@@ -18,7 +18,7 @@ on:
 jobs:
   spec:
     name: RSpec Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: bolt-op_data
@@ -44,7 +44,7 @@ jobs:
 
   rubocop:
     name: RuboCop Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
