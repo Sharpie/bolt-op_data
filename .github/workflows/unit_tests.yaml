@@ -32,14 +32,10 @@ jobs:
         with:
           repository: puppetlabs/puppetlabs-ruby_task_helper
           path: ruby_task_helper
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.x'
-      - name: Install bundler
-        run: |
-          gem install bundler
-          bundle config path .bundle/lib
+          ruby-version: '3.2'
+          bundler-cache: true
       - name: Install gems
         run: bundle install --jobs 4 --retry 3
       - name: Run spec tests
@@ -52,20 +48,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.x'
-      - name: Install bundler
-        run: |
-          gem install bundler
-          bundle config path .bundle/lib
-      - name: Cache gems
-        id: cache
-        uses: actions/cache@v1
-        with:
-          path: .bundle/lib
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
+          ruby-version: '3.2'
+          bundler-cache: true
       - name: Install gems
         if: steps.cache.outputs.cache-hit != 'true'
         run: bundle install --jobs 4 --retry 3
