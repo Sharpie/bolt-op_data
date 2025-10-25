@@ -73,33 +73,6 @@ class OpDataGetItem < TaskHelper
                                   'op_data/cli-missing',
                                   debug: ENV['PATH'])
     end
-
-    credential = resolve_credential(account)
-    unless ENV.key?(credential)
-      raise TaskHelper::Error.new('No credentials in environment variable %{env_var}. Did you run `op signin %{account}` and export the result?' %
-                                    {account: account,
-                                     env_var: credential},
-                                  'op_data/credential-missing')
-    end
-  end
-
-  # Convert an account name to the name of a 1password credential
-  #
-  # This method takes a 1password account name in the form of a subdomain
-  # or alias and returns the environment variable name that the `op` CLI
-  # will expect to find a login token in.
-  #
-  # @param account [String] The subdomain or alias of a 1password account
-  #
-  # @return [String] The name of an environment variable where a login
-  #   token for the account will be stored.
-  def resolve_credential(account)
-    name = account.dup
-    # Trim 1password.com from the end of the account name
-    name.sub!(/\.1password\.com\Z/, '')
-    name.tr!('-', '_')
-
-    "OP_SESSION_#{name}"
   end
 
   # Retrieve item data from 1password

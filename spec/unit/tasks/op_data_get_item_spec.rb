@@ -29,13 +29,6 @@ describe OpDataGetItem do
       expect { task.connect_1password('my.1password.com') }.to \
         raise_error(TaskHelper::Error, /Could not find the `op` command/)
     end
-
-    it 'raises an error when account credentials are not set' do
-      allow(ENV).to receive(:key?).with('OP_SESSION_missing_account').and_return(false)
-
-      expect { task.connect_1password('missing-account.1password.com') }.to \
-        raise_error(TaskHelper::Error, /No credentials in environment variable OP_SESSION_missing_account/)
-    end
   end
 
   describe '#get_item' do
