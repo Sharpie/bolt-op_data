@@ -1,15 +1,15 @@
 # Bolt-op_data
 
-![Unit Tests](https://github.com/Sharpie/bolt-op_data/workflows/Unit%20Tests/badge.svg?branch=master&event=push)
-![Acceptance Tests](https://github.com/Sharpie/bolt-op_data/workflows/Acceptance%20Tests/badge.svg?branch=master)
+[![Unit Tests](https://github.com/Sharpie/bolt-op_data/actions/workflows/unit_tests.yaml/badge.svg?event=push)](https://github.com/Sharpie/bolt-op_data/actions/workflows/unit_tests.yaml)
+[![Acceptance Tests](https://github.com/Sharpie/bolt-op_data/actions/workflows/acceptance_tests.yaml/badge.svg)](https://github.com/Sharpie/bolt-op_data/actions/workflows/acceptance_tests.yaml)
 
 The `op_data` module provides a [Bolt inventory plugin][bolt-plugins] for fetching
 data from 1password vaults. This plugin wraps the [1password CLI tool][op-cli], `op`,
 and is designed to support interactive execution of `bolt` commands from
 an administrator's workstation.
 
-  [bolt-plugins]: https://puppet.com/docs/bolt/latest/using_plugins.html
-  [op-cli]: https://support.1password.com/command-line-getting-started/
+  [bolt-plugins]: https://help.puppet.com/bolt/current/topics/using_plugins.htm#reference-plugins
+  [op-cli]: https://developer.1password.com/docs/cli/get-started/
 
 
 ## Setup
@@ -36,25 +36,28 @@ choco install 1password-cli
 
 Direct downloads and instructions for other operating systems can be found at:
 
-  https://support.1password.com/command-line-getting-started/#set-up-the-command-line-tool
+  https://developer.1password.com/docs/cli/get-started/#step-1-install-1password-cli
 
-Once the CLI is installed, use the `op signin` command to connect 1password
+Once the CLI is installed, use the `op account add` command to connect 1password
 accounts. The `my.1password.com` domain is used by personal accounts while
 enterprise accounts typically use a custom domain: `<org-name>.1password.com`.
 The `op_data` plugin supports using data from multiple account domains at once.
 More information on connecting accounts to the `op` tool can be found here:
 
-  https://support.1password.com/command-line/#appendix-session-management
+  https://developer.1password.com/docs/cli/use-multiple-accounts
 
 
 ### Beginning with op_data
 
 Once the `op` CLI tool is installed and connected to 1password account(s),
 the `op_data` plugin can be used with a Bolt project by adding an entry
-to the `Puppetfile`:
+to the `modules` section of `bolt-project.yaml`:
 
-```ruby
-mod 'sharpie-op_data', '0.2.0'
+```yaml
+modules:
+  # ...
+  - name: 'sharpie-op_data'
+    version_requirement: '0.3.0'
 ```
 
 Next, the `inventory.yaml` file can be configured to retrieve values
@@ -68,7 +71,9 @@ vars:
     account: my.1password.com
     vault: 'op_data Test Vault'
     id: 'DigitalOcean API Token'
-    select: details.password
+    select: |
+      fields[?id == 'credential'].value | [0]
+
 
   vsphere_login:
     _plugin: op_data
@@ -76,8 +81,8 @@ vars:
     vault: 'Personal'
     id: 'vSphere Credential'
     select: |
-      {user: details.fields[?designation == 'username'].value|[0],
-       pass: details.fields[?designation == 'password'].value|[0]}
+      {user: fields[?id == 'username'].value|[0],
+       pass: fields[?id == 'password'].value|[0]}
 ```
 
 The `account` parameter is required and specifies which 1password account
@@ -96,9 +101,9 @@ The [`jp` CLI tool][jp-cli] is useful for developing `select` expressions that
 work against specific 1password records:
 
 ```bash
-eval $(op signin '<account>')
+eval "$(op signin)"
 
-op get item '<id>' [--vault '<vault>'] | jp '<select>'
+op item get '<id>' [--vault '<vault>'] | jp '<select>'
 ```
 
   [jp-cli]: https://github.com/jmespath/jp
