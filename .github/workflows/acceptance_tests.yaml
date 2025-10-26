@@ -75,6 +75,9 @@ jobs:
           pdk bundle exec bolt plan run op_data_test::test_login
 
   windows:
+    # Currently disabled due to issues with getting `pdk` added
+    # to the PATH.
+    if: false
     runs-on: windows-2025
     steps:
       - name: Install PDK
