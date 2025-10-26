@@ -33,11 +33,11 @@ jobs:
         env:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
-          OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_SECRET_KEY: '${{ secrets.OP_TEST_SECRET }}'
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          printf '%s' "${OP_TEST_SECRET}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
+          op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
           eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
@@ -66,11 +66,11 @@ jobs:
         env:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
-          OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_SECRET_KEY: '${{ secrets.OP_TEST_SECRET }}'
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          printf '%s' "${OP_TEST_SECRET}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
+          op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
           eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
@@ -96,11 +96,11 @@ jobs:
         env:
           OP_TEST_PASSWORD: '${{ secrets.OP_TEST_PASSWORD }}'
           OP_TEST_ACCOUNT: '${{ secrets.OP_TEST_ACCOUNT }}'
-          OP_TEST_SECRET: '${{ secrets.OP_TEST_SECRET }}'
+          OP_SECRET_KEY: '${{ secrets.OP_TEST_SECRET }}'
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          Write-Output $Env:OP_TEST_SECRET |op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT
+          op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT
           Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
