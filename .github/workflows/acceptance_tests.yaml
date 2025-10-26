@@ -23,15 +23,9 @@ jobs:
           sudo apt install -y pdk
 
           pdk --version
-      - name: Install 1password CLI
-        run: |
-          curl -LO https://cache.agilebits.com/dist/1P/op/pkg/v1.12.3/op_linux_amd64_v1.12.3.zip
-          unzip op_linux_amd64_v1.12.3.zip
-          sudo install -m 0755 op /usr/local/bin
-
-          op --version
       - name: Checkout repository
         uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep
@@ -43,7 +37,8 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
+          printf '%s' "${OP_TEST_SECRET}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
@@ -61,13 +56,9 @@ jobs:
           printf '%s\n' '/opt/puppetlabs/pdk/bin' >> $GITHUB_PATH
 
           pdk --version
-      - name: Install 1password CLI
-        run: |
-          brew install 1password-cli
-
-          op --version
       - name: Checkout repository
         uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep
@@ -79,7 +70,8 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin my.1password.com "${OP_TEST_ACCOUNT}" "${OP_TEST_SECRET}")
+          printf '%s' "${OP_TEST_SECRET}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
@@ -94,15 +86,9 @@ jobs:
           refreshenv
 
           pdk --version
-      - name: Install 1password CLI
-        run: |
-          choco install -y 1password-cli
-
-          refreshenv
-
-          op --version
       - name: Checkout repository
         uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
       - name: Provision test fixtures
         run: |
           pdk bundle exec rake spec_prep
@@ -114,7 +100,8 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin my.1password.com $Env:OP_TEST_ACCOUNT $Env:OP_TEST_SECRET)
+          Write-Output $Env:OP_TEST_SECRET |op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT
+          Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
