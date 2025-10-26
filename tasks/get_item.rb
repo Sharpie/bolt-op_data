@@ -36,7 +36,7 @@ class OpDataGetItem < TaskHelper
     @select = select
     @vault = vault
 
-    connect_1password(account)
+    connect_1password
 
     data = if select.nil?
              get_item(id, vault)
@@ -52,14 +52,11 @@ class OpDataGetItem < TaskHelper
   # This method locates the 1password CLI on the `$PATH` and ensures
   # that account credentials have been set in the environment.
   #
-  # @param account [String] the name or alias of the 1password account to
-  #   fetch data from.
-  #
   # @raise [TaskHelper::Error] if the `op` CLI cannot be found or credentials
   #   for the `account` are not set in the environment.
   #
   # @return [void]
-  def connect_1password(account)
+  def connect_1password
     if Gem.win_platform?
       @op_cli, have_op = Open3.capture2('where.exe', 'op.exe')
     else
