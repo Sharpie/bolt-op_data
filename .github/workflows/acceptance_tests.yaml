@@ -37,8 +37,7 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
-          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}" --signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
@@ -70,8 +69,7 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}"
-          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op signin)
+          eval $(printf '%s' "${OP_TEST_PASSWORD}" |op account add --address my.1password.com --email "${OP_TEST_ACCOUNT}" --signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
@@ -100,8 +98,7 @@ jobs:
           OP_DEVICE: '${{ secrets.OP_DEVICE_UUID }}'
         working-directory: spec/fixtures
         run: |
-          op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT
-          Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op signin)
+          Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT --signin)
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
