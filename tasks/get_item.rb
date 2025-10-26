@@ -21,7 +21,7 @@ require_relative '../../ruby_task_helper/files/task_helper.rb'
 # @see https://support.1password.com/command-line/#appendix-session-management
 # @see https://jmespath.org/tutorial.html
 class OpDataGetItem < TaskHelper
-  VERSION = '0.2.0'
+  VERSION = '0.3.0'
 
   # @return [String] path to the 1password CLI binary.
   # @return [nil] when no 1password CLI is present.

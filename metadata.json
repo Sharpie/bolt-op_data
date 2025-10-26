@@ -1,6 +1,6 @@
 {
   "name": "sharpie-op_data",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Charlie Sharpsteen",
   "summary": "Bolt inventory plugin for getting data from 1password",
   "license": "Apache-2.0",
