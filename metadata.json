@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs-ruby_task_helper",
-      "version_requirement": ">= 0.4.0 < 1.0.0"
+      "version_requirement": "1.x"
     }
   ],
   "operatingsystem_support": [
