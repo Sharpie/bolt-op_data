@@ -11,14 +11,13 @@ describe OpDataGetItem do
     let(:status) { instance_double(Process::Status) }
 
     before(:each) do
-      allow(ENV).to receive(:key?).with('OP_SESSION_my').and_return(true)
       allow(status).to receive(:success?).and_return(true)
       allow(Open3).to receive(:capture2).and_return(['/foo/bar/op',
                                                      status])
     end
 
     it 'stores the path to `op`' do
-      task.connect_1password('my.1password.com')
+      task.connect_1password
 
       expect(task.op_cli).to eq('/foo/bar/op')
     end
@@ -26,7 +25,7 @@ describe OpDataGetItem do
     it 'raises an error when the `op` CLI is missing' do
       allow(status).to receive(:success?).and_return(false)
 
-      expect { task.connect_1password('my.1password.com') }.to \
+      expect { task.connect_1password }.to \
         raise_error(TaskHelper::Error, /Could not find the `op` command/)
     end
   end
