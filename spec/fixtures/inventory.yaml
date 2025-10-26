@@ -8,7 +8,7 @@ vars:
     vault: 'op_data test vault'
     id: 'Test Password'
     select: |
-      details.password
+      fields[?id == 'password'].value | [0]
 
   test_login:
     _plugin: op_data
@@ -16,5 +16,5 @@ vars:
     vault: 'op_data test vault'
     id: 'Test Login'
     select: |
-      {user: details.fields[?designation == 'username'].value|[0],
-       pass: details.fields[?designation == 'password'].value|[0]}
+      {user: fields[?id == 'username'].value|[0],
+       pass: fields[?id == 'password'].value|[0]}

@@ -90,7 +90,7 @@ class OpDataGetItem < TaskHelper
   # @return [Hash] the result of parsing the JSON representation
   #   of the item.
   def get_item(id, vault = nil)
-    cmdline = [op_cli, 'get', 'item', id]
+    cmdline = [op_cli, 'item', 'get', '--format=json', '--reveal', id]
     cmdline.concat(['--vault', vault]) unless vault.nil?
 
     # TODO: `op get item` makes network calls. Should we
