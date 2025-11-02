@@ -4,17 +4,11 @@ version: 2
 vars:
   test_password:
     _plugin: op_data
-    account: my.1password.com
-    vault: 'op_data test vault'
-    id: 'Test Password'
-    select: |
-      fields[?id == 'password'].value | [0]
+    ref: 'op://op_data test vault/Test Password/password'
 
   test_login:
     _plugin: op_data
-    account: my.1password.com
-    vault: 'op_data test vault'
-    id: 'Test Login'
+    ref: 'op://op_data test vault/Test Login/password'
     select: |
       {user: fields[?id == 'username'].value|[0],
        pass: fields[?id == 'password'].value|[0]}

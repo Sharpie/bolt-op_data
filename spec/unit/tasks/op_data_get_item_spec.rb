@@ -30,6 +30,30 @@ describe OpDataGetItem do
     end
   end
 
+  describe '#read_ref' do
+    let(:status) { instance_double(Process::Status) }
+
+    before(:each) do
+      allow(task).to receive(:op_cli).and_return('/usr/local/bin/op')
+      allow(status).to receive(:success?).and_return(true)
+      allow(Open3).to receive(:capture3).and_return(["hello, world\n",
+                                                     '',
+                                                     status])
+    end
+
+    it 'returns data with newlines trimmed when `op read` succeeds' do
+      expect(task.read_ref('op://foo/bar/baz')).to eq('hello, world')
+    end
+
+    it 'raises an error when `op get item` fails' do
+      allow(status).to receive(:success?).and_return(false)
+      allow(status).to receive(:exitstatus).and_return(13)
+
+      expect { task.read_ref('op://foo/bar/bad') }.to \
+        raise_error(TaskHelper::Error, /exited with error code 13/)
+    end
+  end
+
   describe '#get_item' do
     let(:status) { instance_double(Process::Status) }
 

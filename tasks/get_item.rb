@@ -4,6 +4,7 @@
 require 'json'
 require 'open3'
 require 'rubygems'
+require 'uri'
 
 require 'jmespath'
 
@@ -29,17 +30,15 @@ class OpDataGetItem < TaskHelper
   # @see #connect_1password
   attr_reader :op_cli
 
-  def task(account:, id:, select: nil, vault: nil, **_opts)
+  def task(ref:, select: nil, **_opts)
     # Store parameters for use in error messages.
-    @account = account
-    @id = id
+    @ref = ref
     @select = select
-    @vault = vault
 
     connect_1password
 
     data = if select.nil?
-             get_item(id, vault)
+             read_ref(ref)
            else
              select_value(get_item(id, vault), select)
            end
@@ -66,9 +65,46 @@ class OpDataGetItem < TaskHelper
     if have_op.success?
       @op_cli.chomp!
     else
-      raise TaskHelper::Error.new('Could not find the `op` command. Check the package is installed and the $PATH is configured: https://support.1password.com/command-line-getting-started/',
+      raise TaskHelper::Error.new('Could not find the `op` command. Check the package is installed and the $PATH is configured: https://developer.1password.com/docs/cli/get-started',
                                   'op_data/cli-missing',
                                   debug: ENV['PATH'])
+    end
+  end
+
+  # Read secret reference from 1password
+  #
+  # This method uses `op read` to resolve a URL-style secret
+  # reference to data. This is a compact form of data retrieval,
+  # but is limited to fetching single values.
+  #
+  # @see https://developer.1password.com/docs/cli/secret-reference-syntax
+  #
+  # @param ref [String] the secret reference, expressed as a
+  #   `op://...` URI.
+  #
+  # @raise [TaskHelper::Error] if execution of `op` returns an
+  #   error.
+  #
+  # @return [String] the data value resolved from the secret reference.
+  def read_ref(ref)
+    cmdline = [op_cli, 'read', ref]
+
+    # TODO: `op read` makes network calls. Should we
+    #   have a defensive timeout here?
+    stdout, stderr, status = Open3.capture3(*cmdline)
+
+    if status.success?
+      stdout.chomp
+    else
+      # The first "[LOG]" line often has details of what went wrong.
+      err_msg = stderr.lines.find { |l| l.start_with?('[LOG]') }
+      err_msg&.chomp!
+
+      raise TaskHelper::Error.new('"op read" exited with error code %{code}: %{msg}' %
+                                    {code: status.exitstatus,
+                                     msg: err_msg},
+                                  'op_data/op-read-failed',
+                                  debug: stderr)
     end
   end
 
