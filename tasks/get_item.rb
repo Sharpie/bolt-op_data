@@ -1,12 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'json'
 require 'open3'
 require 'rubygems'
-require 'uri'
-
-require 'jmespath'
 
 require_relative '../../ruby_task_helper/files/task_helper.rb' unless Object.const_defined?('TaskHelper')
 
@@ -40,7 +36,8 @@ class OpDataGetItem < TaskHelper
     data = if select.nil?
              read_ref(ref)
            else
-             select_value(get_item(id, vault), select)
+             @vault, @id = parse_ref(ref)
+             select_value(get_item(@id, @vault), select)
            end
 
     {value: data}
@@ -108,6 +105,26 @@ class OpDataGetItem < TaskHelper
     end
   end
 
+  # Extract Vault Name and Item Name from a Secret Reference
+  #
+  # This method parses a 1password secret reference as a URI
+  # and then returns the Vault Name (hostname) and Item Name
+  # (first path segment).
+  #
+  # @param ref [String] the secret reference, expressed as a
+  #   `op://...` URI.
+  #
+  # @return [Array<String>] A list of `['vault name', 'item name']`
+  def parse_ref(ref)
+    parsed = ref.sub('op://', '').split('/')
+
+    # TODO: Ensure URI has at least two segments
+    vault_name = parsed[0]
+    item_name = parsed[1]
+
+    [vault_name, item_name]
+  end
+
   # Retrieve item data from 1password
   #
   # This method uses the `op` CLI to retrieve an item from
@@ -123,6 +140,7 @@ class OpDataGetItem < TaskHelper
   # @return [Hash] the result of parsing the JSON representation
   #   of the item.
   def get_item(id, vault = nil)
+    require 'json'
     cmdline = [op_cli, 'item', 'get', '--format=json', '--reveal', id]
     cmdline.concat(['--vault', vault]) unless vault.nil?
 
@@ -159,6 +177,7 @@ class OpDataGetItem < TaskHelper
   #
   # @see https://jmespath.org/tutorial.html
   def select_value(data, path)
+    require 'jmespath'
     value = JMESPath.search(path, data)
 
     if value.nil?
@@ -168,15 +187,14 @@ class OpDataGetItem < TaskHelper
     end
   rescue StandardError => e
     errstring = if @vault.nil?
-                  'Error while selecting %{path} from %{id} in %{account}: %{msg} (%{errclass})'
+                  'Error while selecting %{path} from %{id}: %{msg} (%{errclass})'
                 else
-                  'Error while selecting %{path} from %{id} in %{vault} in %{account}: %{msg} (%{errclass})'
+                  'Error while selecting %{path} from %{id} in %{vault}: %{msg} (%{errclass})'
                 end
 
     raise TaskHelper::Error.new(errstring %
                                   {path: path,
                                    id: @id,
-                                   account: @account,
                                    vault: @vault,
                                    msg: e.message,
                                    errclass: e.class.name},

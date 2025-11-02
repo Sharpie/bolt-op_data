@@ -54,6 +54,13 @@ describe OpDataGetItem do
     end
   end
 
+  describe '#parse_ref' do
+    it 'extracts vault name and item name from Secret References' do
+      expect(task.parse_ref('op://foo-vault/item-name')).to \
+        eq(['foo-vault', 'item-name'])
+    end
+  end
+
   describe '#get_item' do
     let(:status) { instance_double(Process::Status) }
 
