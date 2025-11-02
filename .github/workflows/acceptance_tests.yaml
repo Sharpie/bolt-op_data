@@ -110,7 +110,8 @@ jobs:
         run: |
           choco install -y pdk
 
-          refreshenv
+          # For some reason, refreshenv no longer works...
+          $env:PATH += 'C:\Program Files\Puppet Labs\DevelopmentKit\bin'
 
           pdk --version
       - name: Checkout repository
