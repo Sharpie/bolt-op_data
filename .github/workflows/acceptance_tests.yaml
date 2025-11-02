@@ -7,14 +7,23 @@ on:
   pull_request:
     type: [opened, reopened, edited]
     paths-ignore: ['*.md']
-  repository_dispatch:
-    types: [acceptance_tests]
-
+  workflow_dispatch:
+    inputs:
+      ssh-debugging:
+        description: Boolean; whether or not to pause for ssh debugging
+        required: true
+        default: 'false'
 
 jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
+      - name: Start SSH session
+        if: ${{ github.event.inputs.ssh-debugging == 'true' }}
+        uses: luchihoratiu/debug-via-ssh@main
+        with:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
       - name: Install PDK
         run: |
           curl -O http://apt.puppet.com/puppet-tools-release-noble.deb
@@ -46,6 +55,12 @@ jobs:
   mac:
     runs-on: macos-15
     steps:
+      - name: Start SSH session
+        if: ${{ github.event.inputs.ssh-debugging == 'true' }}
+        uses: luchihoratiu/debug-via-ssh@main
+        with:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
       - name: Install PDK
         run: |
           brew tap puppetlabs/puppet
@@ -77,11 +92,14 @@ jobs:
           pdk bundle exec bolt plan run op_data_test::test_login
 
   windows:
-    # Currently disabled due to issues with getting `pdk` added
-    # to the PATH.
-    if: false
     runs-on: windows-2025
     steps:
+      - name: Start SSH session
+        if: ${{ github.event.inputs.ssh-debugging == 'true' }}
+        uses: luchihoratiu/debug-via-ssh@main
+        with:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
       - name: Install PDK
         run: |
           choco install -y pdk

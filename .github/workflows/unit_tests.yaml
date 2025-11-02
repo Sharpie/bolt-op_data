@@ -7,8 +7,7 @@ on:
   pull_request:
     type: [opened, reopened, edited]
     paths-ignore: ['*.md']
-  repository_dispatch:
-    types: [unit_tests]
+  workflow_dispatch: {}
 
 # TODO: Set up PDK and run `pdk test unit` and `pdk validate`
 #
