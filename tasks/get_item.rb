@@ -7,7 +7,7 @@ require 'rubygems'
 
 require 'jmespath'
 
-require_relative '../../ruby_task_helper/files/task_helper.rb'
+require_relative '../../ruby_task_helper/files/task_helper.rb' unless Object.const_defined?('TaskHelper')
 
 # Retrieve data from 1password
 #

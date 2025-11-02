@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'open3'
-require 'rubygems'
+
+require_relative '../../fixtures/modules/ruby_task_helper/files/task_helper.rb'
 
 require_relative '../../../tasks/get_item'
 
