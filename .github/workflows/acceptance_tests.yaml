@@ -110,8 +110,8 @@ jobs:
         run: |
           choco install -y pdk
 
-          # For some reason, refreshenv no longer works...
-          $env:PATH += 'C:\Program Files\Puppet Labs\DevelopmentKit\bin'
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
 
           pdk --version
       - name: Checkout repository
@@ -130,8 +130,6 @@ jobs:
         working-directory: spec/fixtures
         run: |
           Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT --signin)
-
-          $env:PATH += 'C:\Program Files\Puppet Labs\DevelopmentKit\bin'
 
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
