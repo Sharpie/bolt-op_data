@@ -131,5 +131,8 @@ jobs:
         run: |
           Invoke-Expression $(Write-Output $Env:OP_TEST_PASSWORD |op account add --address my.1password.com --email $Env:OP_TEST_ACCOUNT --signin)
 
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
+
           pdk bundle exec bolt plan run op_data_test::test_password
           pdk bundle exec bolt plan run op_data_test::test_login
