@@ -26,13 +26,13 @@ brew cask install 1password-cli
 
   [homebrew]: https://brew.sh
 
-Windows users can install `op` via the [Chocolately package manager][chocolatey]:
+Windows users can install `op` via the [WinGet package manager][winget]:
 
 ```ps1
-choco install 1password-cli
+winget install 1password-cli
 ```
 
-  [chocolatey]: https://chocolatey.org/
+  [winget]: https://learn.microsoft.com/en-us/windows/package-manager/winget/
 
 Direct downloads and instructions for other operating systems can be found at:
 
