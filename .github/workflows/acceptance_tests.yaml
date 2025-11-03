@@ -120,7 +120,6 @@ jobs:
       - uses: jdx/mise-action@v3
       - name: Provision test fixtures
         run: |
-          pdk bundle update
           pdk bundle exec rake spec_prep
       - name: Run acceptance tests
         env:

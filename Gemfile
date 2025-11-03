@@ -43,7 +43,10 @@ group :development, :release_prep do
 end
 group :system_tests do
   # NOTE: This controls which Bolt version is fetched from RubyGems
-  gem "puppet_litmus", '~> 2.4',   require: false, platforms: [:ruby, :x64_mingw]
+  gem "puppet_litmus", '~> 2.4',   require: false, platforms: [:ruby]
+  # NOTE: Updating the gemset on Windows is just... hard.
+  #       So, we leave the PDK 3.4.0 default in place.
+  gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:x64_mingw]
   gem "CFPropertyList", '< 3.0.7', require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "serverspec", '~> 2.41',     require: false
 end
