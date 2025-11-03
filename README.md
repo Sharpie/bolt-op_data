@@ -111,6 +111,13 @@ op item get '<id>' [--vault '<vault>'] | jp '<select>'
 
 ## Usage
 
+> [!NOTE]
+> If the 1password desktop application is also installed, follow the steps
+> to enable CLI integration to eliminate the need to manually run `op signin`
+> in terminal sessions:
+>
+>   https://developer.1password.com/docs/cli/app-integration/#step-1-turn-on-the-app-integration
+
 The `op_data` plugin looks for 1password account credentials set in
 `OP_SESSION_<account>` environment variables created by `op signin`
 and will raise an error if credentials are missing. A typical user
