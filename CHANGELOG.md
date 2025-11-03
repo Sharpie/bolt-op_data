@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Release 0.4.0] - 2025-11-03
+
+### Summary
+
+Major update to re-align usage with modern 1password syntax.
+This release completely breaks backwards compatibility.
+
+### Changed
+
+  - Retired the `account`, `id`, and `vault` parameters. Lookups are now
+    done entirely by 1password Secret References. These `op://...` URL-style
+    strings are much more compact and flexible. Configuration on the Bolt
+    side is greatly simplified, and additional secret types such as Documents
+    and SSH keys can now be accessed.
+
+### Fixed
+
+  - Spent entirely too much time fixing the Windows acceptance tests.
+    The module is now once again tested, against Windows Server 2025.
+
+
 ## [Release 0.3.0] - 2025-10-26
 
 ### Summary
@@ -53,6 +74,7 @@ Initial release of the `op_data` module.
 
   - Support for using JMESPath expressions to select or re-shape 1password data.
 
+[Release 0.4.0]: https://github.com/Sharpie/bolt-op_data/compare/0.3.0...0.4.0
 [Release 0.3.0]: https://github.com/Sharpie/bolt-op_data/compare/0.2.0...0.3.0
 [Release 0.2.0]: https://github.com/Sharpie/bolt-op_data/compare/0.1.0...0.2.0
 [Release 0.1.0]: https://github.com/Sharpie/bolt-op_data/compare/8e002cc...0.1.0

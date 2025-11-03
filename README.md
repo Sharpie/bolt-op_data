@@ -57,7 +57,7 @@ to the `modules` section of `bolt-project.yaml`:
 modules:
   # ...
   - name: 'sharpie-op_data'
-    version_requirement: '0.3.0'
+    version_requirement: '0.4.0'
 ```
 
 Next, the `inventory.yaml` file can be configured to retrieve values
