@@ -61,39 +61,37 @@ modules:
 ```
 
 Next, the `inventory.yaml` file can be configured to retrieve values
-using `_plugin: op_data`. For example, to make passwords or login
-credentials available as variables:
+using `_plugin: op_data`.
+
+Simple values, like tokens or passwords, can be retrieved using a
+[Secret Reference][op-secret-ref]:
 
 ```yaml
 vars:
   do_token:
     _plugin: op_data
-    account: my.1password.com
-    vault: 'op_data Test Vault'
-    id: 'DigitalOcean API Token'
-    select: |
-      fields[?id == 'credential'].value | [0]
+    ref: 'op://op_data Test Vault/DigitalOcean API Token/credential'
+```
 
+Complex values with more than one field, such as username+password logins,
+can be fetched in one operation by using the `select` parameter to re-shape
+1password fields into a hash:
 
+```yaml
+vars:
   vsphere_login:
     _plugin: op_data
-    account: example-corp.1password.com
-    vault: 'Personal'
-    id: 'vSphere Credential'
+    ref: 'op://Personal/vSphere Credential'
     select: |
       {user: fields[?id == 'username'].value|[0],
        pass: fields[?id == 'password'].value|[0]}
+
+# Produces:
+# $vsphere_login = { user => '<username value>',
+#                    pass => '<password value>'  }
 ```
 
-The `account` parameter is required and specifies which 1password account
-domain to look data up in. The `id` parameter is also required and gives
-the name or UUID of the data item to look up. The `vault` parameter is
-optional, accepts a vault name or UUID, and is used to restrict a lookup to a
-specific vault in a domain. The `inventory.yaml` file may be configured to
-look up data from multiple account domains.
-
-The `select` parameter can be used to extract or re-shape data using
-JMESPath expressions:
+The `select` parameter uses JMESPath expressions:
 
   https://jmespath.org/tutorial.html
 
@@ -103,10 +101,11 @@ work against specific 1password records:
 ```bash
 eval "$(op signin)"
 
-op item get '<id>' [--vault '<vault>'] | jp '<select>'
+op item get --format json '<item id>' | jp '<select>'
 ```
 
-  [jp-cli]: https://github.com/jmespath/jp
+[op-secret-ref]: https://developer.1password.com/docs/cli/secret-reference-syntax
+[jp-cli]: https://github.com/jmespath/jp
 
 
 ## Usage
